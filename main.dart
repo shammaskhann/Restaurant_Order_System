@@ -1,6 +1,7 @@
 //Restaurant System
 import 'dart:io';
 
+int attempt = 0;
 Map Order = {};
 List AllOrders = [];
 Map MenuPrice = {
@@ -13,33 +14,42 @@ List<Map> Employees = [];
 int OrderNo = 0;
 void main() {
   //initializing some value for testing purpose
-  Employees.add({"ID": "Ali123", "Password": "123"});
-  Employees.add({"ID": "Ahmed123", "Password": "1234"});
-  Employees.add({"ID": "Hamza123", "Password": "12345"});
-  MainMenu();
+  Employees.add({"ID": "Ali123", "Password": "123", "designation": "Manager"});
+  Employees.add({"ID": "Ahmed123", "Password": "1234", "designation": "Chef"});
+  Employees.add(
+      {"ID": "Hamza123", "Password": "12345", "designation": "Waiter"});
+  Login();
 }
 
 Login() {
-  print("===Login===");
-  stdout.write("Enter ID: ");
-  var ID = stdin.readLineSync()!;
-  stdout.write("Enter Password: ");
-  var Password = stdin.readLineSync()!;
-  bool isFound = false;
-  for (int i = 0; i < Employees.length; i++) {
-    if (ID == Employees[i]["ID"] && Password == Employees[i]["Password"]) {
-      isFound = true;
-      MainMenu();
+  while (attempt < 4) {
+    attempt++;
+    print("===Login===");
+    stdout.write("Enter ID: ");
+    var ID = stdin.readLineSync()!;
+    stdout.write("Enter Password: ");
+    var Password = stdin.readLineSync()!;
+    bool isFound = false;
+    for (int i = 0; i < Employees.length; i++) {
+      if (ID == Employees[i]["ID"] && Password == Employees[i]["Password"]) {
+        isFound = true;
+        MainMenu(i);
+      }
+    }
+    if (!isFound) {
+      print("Invalid ID or Password");
+      print("Returning to Login");
+      Login();
     }
   }
-  if (!isFound) {
-    print("Invalid ID or Password");
-    print("Returning to Login");
-    Login();
+  if (attempt == 4) {
+    print("You have exceeded the maximum number of attempts");
+    print("Please try again later");
+    exit(0);
   }
 }
 
-MainMenu() {
+MainMenu(int index) {
   print("Welcome to Restaurant System");
   print("1. Order");
   print("2. Update Price");
@@ -49,13 +59,13 @@ MainMenu() {
   var choice = int.parse(stdin.readLineSync()!);
   switch (choice) {
     case 1:
-      OrderMenu();
+      OrderMenu(index);
       break;
     case 2:
-      UpdatePrice();
+      UpdatePrice(index);
       break;
     case 3:
-      OrderHistory();
+      OrderHistory(index);
       break;
     case 4:
       Login();
@@ -66,7 +76,12 @@ MainMenu() {
   }
 }
 
-UpdatePrice() {
+UpdatePrice(int index) {
+  if (Employees[index]["designation"] != "Manager") {
+    print("You are not authorized to update price");
+    print("Returning to Main Menu");
+    MainMenu(index);
+  }
   print("Update Price");
   print("1. Chicken Burger Current Price: ${MenuPrice["Chicken Burger"]}");
   print("2. Beef Burger Current Price: ${MenuPrice["Beef Burger"]}");
@@ -94,15 +109,15 @@ UpdatePrice() {
   } else {
     print("Invalid choice");
     print("Returning to Main Menu");
-    MainMenu();
+    MainMenu(index);
   }
   print("Price Updated");
   print("Press Enter to Continue");
   stdin.readLineSync();
-  MainMenu();
+  MainMenu(index);
 }
 
-OrderHistory() {
+OrderHistory(int index) {
   print("Order History");
   print("1. All Orders");
   print("2. Search Order");
@@ -119,7 +134,7 @@ OrderHistory() {
       SearchOrder();
       break;
     case 3:
-      MainMenu();
+      MainMenu(index);
       break;
     default:
       print("Invalid choice");
@@ -137,7 +152,7 @@ SearchOrder() {
   }
 }
 
-OrderMenu() {
+OrderMenu(int index) {
   print("1. Add Order");
   print("2. Edit Order");
   print("3. Delete Order");
@@ -146,16 +161,16 @@ OrderMenu() {
   var choice = int.parse(stdin.readLineSync()!);
   switch (choice) {
     case 1:
-      AddOrder();
+      AddOrder(index);
       break;
     case 2:
-      EditOrder();
+      EditOrder(index);
       break;
     case 3:
-      DeleteOrder();
+      DeleteOrder(index);
       break;
     case 4:
-      MainMenu();
+      MainMenu(index);
       break;
     default:
       print("Invalid choice");
@@ -163,7 +178,7 @@ OrderMenu() {
   }
 }
 
-AddOrder() {
+AddOrder(int index) {
   var choice2;
   OrderNo++;
   do {
@@ -194,7 +209,7 @@ AddOrder() {
       Order["Double Beef Burger"] = quantity;
     } else {
       print("Invalid choice");
-      AddOrder();
+      AddOrder(index);
     }
     print("Do you want to add Another Item:(y/n):");
     choice2 = stdin.readLineSync()!;
@@ -206,10 +221,10 @@ AddOrder() {
     }
   } while (
       choice2 == 'y' || choice2 == 'Y' || choice2 == 'yes' || choice2 == 'Yes');
-  BillGenerator();
+  BillGenerator(index);
 }
 
-BillGenerator() {
+BillGenerator(int index) {
   double Total;
   double Tax;
   double GrandTotal;
@@ -253,7 +268,7 @@ BillGenerator() {
     print("Press Enter to Continue");
     stdin.readLineSync();
     Order.clear();
-    MainMenu();
+    MainMenu(index);
   }
   if (choice == 2) {
     print("Enter Credit Card Number: ");
@@ -286,7 +301,7 @@ BillGenerator() {
     print("Press Enter to Continue");
     Order.clear();
     stdin.readLineSync();
-    OrderMenu();
+    OrderMenu(index);
   }
   if (choice == 3) {
     //Cancel Order
@@ -296,7 +311,7 @@ BillGenerator() {
   }
 }
 
-EditOrder() {
+EditOrder(int index) {
   stdout.write("Enter Order No: ");
   var OrderNos = int.parse(stdin.readLineSync()!);
   for (int i = 0; i < AllOrders.length; i++) {
@@ -328,13 +343,13 @@ EditOrder() {
         Order["Double Beef Burger"] = quantity;
       } else {
         print("Invalid choice");
-        OrderMenu();
+        OrderMenu(index);
       }
     }
   }
 }
 
-DeleteOrder() {
+DeleteOrder(int index) {
   bool isDeleted = false;
   stdout.write("Enter Order No: ");
   var OrderNos = int.parse(stdin.readLineSync()!);
@@ -347,6 +362,6 @@ DeleteOrder() {
   if (!isDeleted) {
     print("Order Not Found");
     print("Returning to MainMenu");
-    OrderMenu();
+    OrderMenu(index);
   }
 }
