@@ -2,22 +2,51 @@
 import 'dart:io';
 
 int attempt = 0;
-Map Order = {};
 List AllOrders = [];
-Map MenuPrice = {
+Map<String, int> MenuPrice = {
   "Chicken Burger": 200,
   "Beef Burger": 250,
   "Zinger Burger": 300,
   "Double Beef Burger": 350,
 };
-List<Map> Employees = [];
+List Employees = [];
 int OrderNo = 0;
 void main() {
   //initializing some value for testing purpose
-  Employees.add({"ID": "Ali123", "Password": "123", "designation": "Manager"});
-  Employees.add({"ID": "Ahmed123", "Password": "1234", "designation": "Chef"});
-  Employees.add(
-      {"ID": "Hamza123", "Password": "12345", "designation": "Waiter"});
+  Employees.add({
+    "ID": "Ali123",
+    "Password": "123",
+    "name": "Ali",
+    "designation": "Manager"
+  });
+  Employees.add({
+    "ID": "Ahmed123",
+    "Password": "1234",
+    "name": "Ahmed",
+    "designation": "Chef"
+  });
+  Employees.add({
+    "ID": "Hamza123",
+    "Password": "12345",
+    "name": "Hamza",
+    "designation": "Waiter"
+  });
+  Map Order1 = {
+    "Order No": 1,
+    "Chicken Burger": 2,
+    "Beef Burger": 1,
+    "Zinger Burger": 1,
+    "Double Beef Burger": 1,
+  };
+  Map Order2 = {
+    "Order No": 2,
+    "Chicken Burger": 2,
+    "Beef Burger": 2,
+    "Zinger Burger": 2,
+    "Double Beef Burger": 1,
+  };
+  AllOrders.add(Order1);
+  AllOrders.add(Order2);
   Login();
 }
 
@@ -27,8 +56,10 @@ Login() {
     print("===Login===");
     stdout.write("Enter ID: ");
     var ID = stdin.readLineSync()!;
+    print("- - - - - - - - - - - - - - -");
     stdout.write("Enter Password: ");
     var Password = stdin.readLineSync()!;
+    print("- - - - - - - - - - - - - - -");
     bool isFound = false;
     for (int i = 0; i < Employees.length; i++) {
       if (ID == Employees[i]["ID"] && Password == Employees[i]["Password"]) {
@@ -43,36 +74,40 @@ Login() {
     }
   }
   if (attempt == 4) {
-    print("You have exceeded the maximum number of attempts");
+    print(" => You have exceeded the maximum number of attempts");
     print("Please try again later");
     exit(0);
   }
 }
 
 MainMenu(int index) {
-  print("Welcome to Restaurant System");
+  print(" ==> Welcome ${Employees[index]["name"]} to Restaurant System <==");
   print("1. Order");
+  print("- - - - - - - - - ");
   print("2. Update Price");
+  print("- - - - - - - - - ");
   print("3. Order History");
+  print("- - - - - - - - - ");
   print("4. Log out");
-  print("Please enter your choice: ");
+  print("- - - - - - - - - ");
+  print("5. Exit");
+  print("- - - - - - - - - ");
+  stdout.write("Please enter your choice: ");
   var choice = int.parse(stdin.readLineSync()!);
-  switch (choice) {
-    case 1:
-      OrderMenu(index);
-      break;
-    case 2:
-      UpdatePrice(index);
-      break;
-    case 3:
-      OrderHistory(index);
-      break;
-    case 4:
-      Login();
-      break;
-    default:
-      print("Invalid choice");
-      break;
+  print("- - - - - - - - - ");
+  if (choice == 1) {
+    OrderMenu(index);
+  } else if (choice == 2) {
+    UpdatePrice(index);
+  } else if (choice == 3) {
+    OrderHistory(index);
+  } else if (choice == 4) {
+    Login();
+  } else if (choice == 5) {
+    exit(0);
+  } else {
+    print("Invalid choice");
+    MainMenu(index);
   }
 }
 
@@ -118,38 +153,47 @@ UpdatePrice(int index) {
 }
 
 OrderHistory(int index) {
-  print("Order History");
+  print("==> Order History <== ");
   print("1. All Orders");
+  print("- - - - - - - - - ");
   print("2. Search Order");
+  print("- - - - - - - - - ");
   print("3. Back to Main Menu");
-  print("Please enter your choice: ");
+  print("- - - - - - - - - ");
+  stdout.write("Please enter your choice: ");
   var choice = int.parse(stdin.readLineSync()!);
-  switch (choice) {
-    case 1:
-      AllOrders.forEach((element) {
-        print(element);
-      });
-      break;
-    case 2:
-      SearchOrder();
-      break;
-    case 3:
-      MainMenu(index);
-      break;
-    default:
-      print("Invalid choice");
-      break;
+  print("- - - - - - - - - ");
+  if (choice == 1) {
+    AllOrders.forEach((element) {
+      print(element);
+    });
+    MainMenu(index);
+  } else if (choice == 2) {
+    SearchOrder(index);
+  } else if (choice == 3) {
+    MainMenu(index);
+  } else {
+    print("Invalid choice");
+    OrderHistory(index);
   }
 }
 
-SearchOrder() {
+SearchOrder(int index) {
+  bool isFound = false;
   stdout.write("Enter Order No: ");
   var OrderNos = int.parse(stdin.readLineSync()!);
   for (int i = 0; i < AllOrders.length; i++) {
     if (OrderNos == AllOrders[i]["Order No"]) {
       print(AllOrders[i]);
+      isFound = true;
     }
   }
+  if (!isFound) {
+    print("Order Not Found");
+    print("Returning to Order History");
+    OrderHistory(index);
+  }
+  MainMenu(index);
 }
 
 OrderMenu(int index) {
@@ -159,200 +203,264 @@ OrderMenu(int index) {
   print("4. Back to Main Menu");
   print("Please enter your choice: ");
   var choice = int.parse(stdin.readLineSync()!);
-  switch (choice) {
-    case 1:
-      AddOrder(index);
-      break;
-    case 2:
-      EditOrder(index);
-      break;
-    case 3:
-      DeleteOrder(index);
-      break;
-    case 4:
-      MainMenu(index);
-      break;
-    default:
-      print("Invalid choice");
-      break;
+  if (choice == 1) {
+    AddOrder(index);
+  } else if (choice == 2) {
+    EditOrder(index);
+  } else if (choice == 3) {
+    DeleteOrder(index);
+  } else if (choice == 4) {
+    MainMenu(index);
+  } else {
+    print("Invalid choice");
+    OrderMenu(index);
   }
 }
 
 AddOrder(int index) {
+  Map order = {};
   var choice2;
   OrderNo++;
   do {
     print("Order No: $OrderNo");
-    Order["Order No"] = OrderNo;
-    print("Select Food");
+    order['Order No'] = OrderNo;
+    print("=======> Menu <=======");
     print("1. Chicken Burger ${MenuPrice["Chicken Burger"]}");
+    print("- - - - - - - - - - - - - - -");
     print("2. Beef Burger ${MenuPrice["Beef Burger"]}");
+    print("- - - - - - - - - - - - - - -");
     print("3. Zinger Burger ${MenuPrice["Zinger Burger"]}");
+    print("- - - - - - - - - - - - - - -");
     print("4. Double Beef Burger ${MenuPrice["Double Beef Burger"]}");
-    print("Please enter your choice: ");
+    print("- - - - - - - - - - - - - - -");
+    stdout.write("Please enter your choice: ");
     var choice = int.parse(stdin.readLineSync()!);
+    print("- - - - - - - - - - - - - - -");
     if (choice == 1) {
       stdout.write("Enter Quantity: ");
       var quantity = int.parse(stdin.readLineSync()!);
-      Order["Chicken Burger"] = quantity;
+      order['Chicken Burger'] = quantity;
     } else if (choice == 2) {
       stdout.write("Enter Quantity: ");
       var quantity = int.parse(stdin.readLineSync()!);
-      Order["Beef Burger"] = quantity;
+      order['Beef Burger'] = quantity;
     } else if (choice == 3) {
       stdout.write("Enter Quantity: ");
       var quantity = int.parse(stdin.readLineSync()!);
-      Order["Zinger Burger"] = quantity;
+      order['Zinger Burger'] = quantity;
     } else if (choice == 4) {
       stdout.write("Enter Quantity: ");
       var quantity = int.parse(stdin.readLineSync()!);
-      Order["Double Beef Burger"] = quantity;
+      order['Double Beef Burger'] = quantity;
     } else {
       print("Invalid choice");
+      print("- - - - - - - - - - - - - - -");
       AddOrder(index);
     }
-    print("Do you want to add Another Item:(y/n):");
+    stdout.write("Do you want to add Another Item:(y/n):");
     choice2 = stdin.readLineSync()!;
-    if (choice2 != 'y' ||
-        choice2 != 'Y' ||
-        choice2 != 'yes' ||
-        choice2 != 'Yes') {
-      AllOrders.add(Order);
-    }
+    print("- - - - - - - - - - - - - - -");
   } while (
       choice2 == 'y' || choice2 == 'Y' || choice2 == 'yes' || choice2 == 'Yes');
-  BillGenerator(index);
+  AllOrders.add(Map.from(order));
+  BillGenerator(index, order);
 }
 
-BillGenerator(int index) {
+BillGenerator(int index, Map Order) {
   double Total;
   double Tax;
   double GrandTotal;
   double Discount;
   double NetTotal;
-  print("Bill Generator");
+  print("==> Select Payment Method <==");
   print("1. Cash");
+  print("- - - - - -");
   print("2. Credit Card");
+  print("- - - - - -");
   print("3. Cancel Order");
-  print("Please enter your choice: ");
+  print("- - - - - -");
+  stdout.write("Please enter your choice: ");
   var choice = int.parse(stdin.readLineSync()!);
+  print("- - - - - - - - - - - - - - -");
+  print("=======> Bill <=======");
   if (choice == 1) {
     Total = 0;
     if (Order["Chicken Burger"] != null) {
       Total = Total + Order["Chicken Burger"] * MenuPrice["Chicken Burger"];
+      print(
+          "Chicken Burger: ${Order["Chicken Burger"]} x ${MenuPrice["Chicken Burger"]} = ${Order["Chicken Burger"] * MenuPrice["Chicken Burger"]}");
+      print("- - - - - - - - - - - - - - -");
     }
     if (Order["Beef Burger"] != null) {
       Total = Total + Order["Beef Burger"] * MenuPrice["Beef Burger"];
+      print(
+          "Beef Burger: ${Order["Beef Burger"]} x ${MenuPrice["Beef Burger"]} = ${Order["Beef Burger"] * MenuPrice["Beef Burger"]}");
+      print("- - - - - - - - - - - - - - -");
     }
     if (Order["Zinger Burger"] != null) {
       Total = Total + Order["Zinger Burger"] * MenuPrice["Zinger Burger"];
+      print(
+          "Zinger Burger: ${Order["Zinger Burger"]} x ${MenuPrice["Zinger Burger"]} = ${Order["Zinger Burger"] * MenuPrice["Zinger Burger"]}");
+      print("- - - - - - - - - - - - - - -");
     }
     if (Order["Double Beef Burger"] != null) {
       Total =
           Total + Order["Double Beef Burger"] * MenuPrice["Double Beef Burger"];
+      print(
+          "Double Beef Burger: ${Order["Double Beef Burger"]} x ${MenuPrice["Double Beef Burger"]} = ${Order["Double Beef Burger"] * MenuPrice["Double Beef Burger"]}");
+      print("- - - - - - - - - - - - - - -");
     }
     Tax = Total * 0.13;
     GrandTotal = Total + Tax;
     Discount = GrandTotal * 0.05;
     NetTotal = GrandTotal - Discount;
     print("Total: Rs $Total");
+    print("- - - - - - - - - - - - - - -");
     print("Tax: Rs $Tax");
+    print("- - - - - - - - - - - - - - -");
     print("Grand Total: Rs $GrandTotal");
+    print("- - - - - - - - - - - - - - -");
     print("Discount: Rs $Discount");
+    print("- - - - - - - - - - - - - - -");
     print("Net Total: Rs $NetTotal");
+    print("================================");
     stdout.write("Enter Cash Amount Recieved: ");
     var Cash = double.parse(stdin.readLineSync()!);
     print("Cash: Rs $Cash");
     print("Change: Rs ${Cash - NetTotal}");
     print("Thank you for visiting");
+    print("- - - - - - - - - - - - - - -");
     print("Press Enter to Continue");
     stdin.readLineSync();
     Order.clear();
     MainMenu(index);
   }
   if (choice == 2) {
-    print("Enter Credit Card Number: ");
+    stdout.write("Enter Credit Card Number: ");
     var CreditCard = stdin.readLineSync()!;
+    print("- - - - - - - - - - - - - - -");
     Total = 0;
     if (Order["Chicken Burger"] != null) {
       Total = Total + Order["Chicken Burger"] * MenuPrice["Chicken Burger"];
+      print(
+          "Chicken Burger: ${Order["Chicken Burger"]} x ${MenuPrice["Chicken Burger"]} = ${Order["Chicken Burger"] * MenuPrice["Chicken Burger"]}");
+      print("- - - - - - - - - - - - - - -");
     }
     if (Order["Beef Burger"] != null) {
       Total = Total + Order["Beef Burger"] * MenuPrice["Beef Burger"];
+      print(
+          "Beef Burger: ${Order["Beef Burger"]} x ${MenuPrice["Beef Burger"]} = ${Order["Beef Burger"] * MenuPrice["Beef Burger"]}");
+      print("- - - - - - - - - - - - - - -");
     }
     if (Order["Zinger Burger"] != null) {
       Total = Total + Order["Zinger Burger"] * MenuPrice["Zinger Burger"];
+      print(
+          "Zinger Burger: ${Order["Zinger Burger"]} x ${MenuPrice["Zinger Burger"]} = ${Order["Zinger Burger"] * MenuPrice["Zinger Burger"]}");
+      print("- - - - - - - - - - - - - - -");
     }
     if (Order["Double Beef Burger"] != null) {
       Total =
           Total + Order["Double Beef Burger"] * MenuPrice["Double Beef Burger"];
+      print(
+          "Double Beef Burger: ${Order["Double Beef Burger"]} x ${MenuPrice["Double Beef Burger"]} = ${Order["Double Beef Burger"] * MenuPrice["Double Beef Burger"]}");
+      print("- - - - - - - - - - - - - - -");
     }
     Tax = Total * 0.13;
     GrandTotal = Total + Tax;
     Discount = GrandTotal * 0.05;
     NetTotal = GrandTotal - Discount;
     print("Total: Rs $Total");
+    print("- - - - - - - - - - - - - - -");
     print("Tax: Rs $Tax");
+    print("- - - - - - - - - - - - - - -");
     print("Grand Total: Rs $GrandTotal");
+    print("- - - - - - - - - - - - - - -");
     print("Discount: Rs $Discount");
+    print("- - - - - - - - - - - - - - -");
     print("Net Total: Rs $NetTotal");
+    print("- - - - - - - - - - - - - - -");
     print("Credit Card Number: $CreditCard");
+    print("- - - - - - - - - - - - - - -");
     print("Thank you for visiting");
+    print("==============================");
     print("Press Enter to Continue");
     Order.clear();
     stdin.readLineSync();
     OrderMenu(index);
   }
   if (choice == 3) {
-    //Cancel Order
     Order.clear();
+    print("Order Cancelled Sucessfully");
+    AllOrders.removeAt(AllOrders.length - 1);
+    MainMenu(index);
   } else {
     print("Invalid choice");
+    BillGenerator(index, Order);
   }
 }
 
 EditOrder(int index) {
+  var choice2;
+  Map orderEdit = {};
   stdout.write("Enter Order No: ");
   var OrderNos = int.parse(stdin.readLineSync()!);
   for (int i = 0; i < AllOrders.length; i++) {
     if (OrderNos == AllOrders[i]["Order No"]) {
-      Order = AllOrders[i];
-      print(" Re-Enter Order");
-      print("Order No: ${Order["Order No"]}");
-      print("1. Chicken Burger ${MenuPrice["Chicken Burger"]}");
-      print("2. Beef Burger ${MenuPrice["Beef Burger"]}");
-      print("3. Zinger Burger ${MenuPrice["Zinger Burger"]}");
-      print("4. Double Beef Burger ${MenuPrice["Double Beef Burger"]}");
-      stdout.write("Please enter your choice: ");
-      var choice = int.parse(stdin.readLineSync()!);
-      if (choice == 1) {
-        stdout.write("Enter Quantity: ");
-        var quantity = int.parse(stdin.readLineSync()!);
-        Order["Chicken Burger"] = quantity;
-      } else if (choice == 2) {
-        stdout.write("Enter Quantity: ");
-        var quantity = int.parse(stdin.readLineSync()!);
-        Order["Beef Burger"] = quantity;
-      } else if (choice == 3) {
-        stdout.write("Enter Quantity: ");
-        var quantity = int.parse(stdin.readLineSync()!);
-        Order["Zinger Burger"] = quantity;
-      } else if (choice == 4) {
-        stdout.write("Enter Quantity: ");
-        var quantity = int.parse(stdin.readLineSync()!);
-        Order["Double Beef Burger"] = quantity;
-      } else {
-        print("Invalid choice");
-        OrderMenu(index);
-      }
+      orderEdit = AllOrders[i];
+      do {
+        print("==> Re-Enter Order <==");
+        print("Order No: ${orderEdit["Order No"]}");
+        print("- - - - - - - - - - - - - - -");
+        print("1. Chicken Burger ${MenuPrice["Chicken Burger"]}");
+        print("- - - - - - - - - - - - - - -");
+        print("2. Beef Burger ${MenuPrice["Beef Burger"]}");
+        print("- - - - - - - - - - - - - - -");
+        print("3. Zinger Burger ${MenuPrice["Zinger Burger"]}");
+        print("- - - - - - - - - - - - - - -");
+        print("4. Double Beef Burger ${MenuPrice["Double Beef Burger"]}");
+        print("- - - - - - - - - - - - - - -");
+        stdout.write("Please enter your choice: ");
+        var choice = int.parse(stdin.readLineSync()!);
+        print("- - - - - - - - - - - - - - -");
+        if (choice == 1) {
+          stdout.write("Enter Quantity: ");
+          var quantity = int.parse(stdin.readLineSync()!);
+          orderEdit["Chicken Burger"] = quantity;
+        } else if (choice == 2) {
+          stdout.write("Enter Quantity: ");
+          var quantity = int.parse(stdin.readLineSync()!);
+          orderEdit["Beef Burger"] = quantity;
+        } else if (choice == 3) {
+          stdout.write("Enter Quantity: ");
+          var quantity = int.parse(stdin.readLineSync()!);
+          orderEdit["Zinger Burger"] = quantity;
+        } else if (choice == 4) {
+          stdout.write("Enter Quantity: ");
+          var quantity = int.parse(stdin.readLineSync()!);
+          orderEdit["Double Beef Burger"] = quantity;
+        } else {
+          print("Invalid choice");
+          OrderMenu(index);
+        }
+        stdout.write("Do you want to add Another Item:(y/n):");
+        choice2 = stdin.readLineSync()!;
+        print("- - - - - - - - - - - - - - -");
+      } while (choice2 == 'y' ||
+          choice2 == 'Y' ||
+          choice2 == 'yes' ||
+          choice2 == 'Yes');
+      AllOrders.add(Map.from(orderEdit));
+      BillGenerator(index, orderEdit);
     }
   }
 }
 
 DeleteOrder(int index) {
   bool isDeleted = false;
+  print("==> Delete Order <==");
   stdout.write("Enter Order No: ");
   var OrderNos = int.parse(stdin.readLineSync()!);
+  print("- - - - - - - - - - - - - - -");
   for (int i = 0; i < AllOrders.length; i++) {
     if (OrderNos == AllOrders[i]["Order No"]) {
       AllOrders.removeAt(i);
@@ -360,8 +468,10 @@ DeleteOrder(int index) {
     }
   }
   if (!isDeleted) {
+    print("- - - - - - - - - - - - - - -");
     print("Order Not Found");
     print("Returning to MainMenu");
+    print("- - - - - - - - - - - - - - -");
     OrderMenu(index);
   }
 }
