@@ -9,12 +9,36 @@ Map MenuPrice = {
   "Zinger Burger": 300,
   "Double Beef Burger": 350,
 };
+List<Map> Employees = [];
 int OrderNo = 0;
 void main() {
+  //initializing some value for testing purpose
+  Employees.add({"ID": "Ali123", "Password": "123"});
+  Employees.add({"ID": "Ahmed123", "Password": "1234"});
+  Employees.add({"ID": "Hamza123", "Password": "12345"});
   MainMenu();
 }
 
-Login() {}
+Login() {
+  print("===Login===");
+  stdout.write("Enter ID: ");
+  var ID = stdin.readLineSync()!;
+  stdout.write("Enter Password: ");
+  var Password = stdin.readLineSync()!;
+  bool isFound = false;
+  for (int i = 0; i < Employees.length; i++) {
+    if (ID == Employees[i]["ID"] && Password == Employees[i]["Password"]) {
+      isFound = true;
+      MainMenu();
+    }
+  }
+  if (!isFound) {
+    print("Invalid ID or Password");
+    print("Returning to Login");
+    Login();
+  }
+}
+
 MainMenu() {
   print("Welcome to Restaurant System");
   print("1. Order");
@@ -28,7 +52,7 @@ MainMenu() {
       OrderMenu();
       break;
     case 2:
-      //SalesReport();
+      UpdatePrice();
       break;
     case 3:
       OrderHistory();
@@ -40,6 +64,42 @@ MainMenu() {
       print("Invalid choice");
       break;
   }
+}
+
+UpdatePrice() {
+  print("Update Price");
+  print("1. Chicken Burger Current Price: ${MenuPrice["Chicken Burger"]}");
+  print("2. Beef Burger Current Price: ${MenuPrice["Beef Burger"]}");
+  print("3. Zinger Burger Current Price: ${MenuPrice["Zinger Burger"]}");
+  print(
+      "4. Double Beef Burger Current Price: ${MenuPrice["Double Beef Burger"]}");
+  print("Please enter your choice: ");
+  var choice = int.parse(stdin.readLineSync()!);
+  if (choice == 1) {
+    stdout.write("Enter New Price: ");
+    var NewPrice = int.parse(stdin.readLineSync()!);
+    MenuPrice["Chicken Burger"] = NewPrice;
+  } else if (choice == 2) {
+    stdout.write("Enter New Price: ");
+    var NewPrice = int.parse(stdin.readLineSync()!);
+    MenuPrice["Beef Burger"] = NewPrice;
+  } else if (choice == 3) {
+    stdout.write("Enter New Price: ");
+    var NewPrice = int.parse(stdin.readLineSync()!);
+    MenuPrice["Zinger Burger"] = NewPrice;
+  } else if (choice == 4) {
+    stdout.write("Enter New Price: ");
+    var NewPrice = int.parse(stdin.readLineSync()!);
+    MenuPrice["Double Beef Burger"] = NewPrice;
+  } else {
+    print("Invalid choice");
+    print("Returning to Main Menu");
+    MainMenu();
+  }
+  print("Price Updated");
+  print("Press Enter to Continue");
+  stdin.readLineSync();
+  MainMenu();
 }
 
 OrderHistory() {
@@ -56,7 +116,7 @@ OrderHistory() {
       });
       break;
     case 2:
-      //SalesReport();
+      SearchOrder();
       break;
     case 3:
       MainMenu();
@@ -64,6 +124,16 @@ OrderHistory() {
     default:
       print("Invalid choice");
       break;
+  }
+}
+
+SearchOrder() {
+  stdout.write("Enter Order No: ");
+  var OrderNos = int.parse(stdin.readLineSync()!);
+  for (int i = 0; i < AllOrders.length; i++) {
+    if (OrderNos == AllOrders[i]["Order No"]) {
+      print(AllOrders[i]);
+    }
   }
 }
 
@@ -82,7 +152,7 @@ OrderMenu() {
       EditOrder();
       break;
     case 3:
-      //DeleteOrder();
+      DeleteOrder();
       break;
     case 4:
       MainMenu();
