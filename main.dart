@@ -31,7 +31,7 @@ void main() {
     "designation": "Waiter"
   });
   Map Order1 = {
-    "Order No": 1,
+    "Order No": 419,
     "Chicken Burger": 2,
     "Beef Burger": 1,
     "Zinger Burger": 1,
@@ -40,7 +40,7 @@ void main() {
     "Time": "12:00:00"
   };
   Map Order2 = {
-    "Order No": 2,
+    "Order No": 420,
     "Chicken Burger": 2,
     "Beef Burger": 2,
     "Zinger Burger": 2,
@@ -441,7 +441,7 @@ EditOrder(int index) {
   var OrderNos = int.parse(stdin.readLineSync()!);
   for (int i = 0; i < AllOrders.length; i++) {
     if (OrderNos == AllOrders[i]["Order No"]) {
-      orderEdit = AllOrders[i];
+      orderEdit["Order No"] = OrderNos;
       do {
         print("==> Re-Enter Order <==");
         print("Order No: ${orderEdit["Order No"]}");
