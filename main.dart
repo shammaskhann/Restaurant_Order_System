@@ -1,4 +1,3 @@
-//Restaurant System
 import 'dart:io';
 
 int attempt = 0;
@@ -37,13 +36,17 @@ void main() {
     "Beef Burger": 1,
     "Zinger Burger": 1,
     "Double Beef Burger": 1,
+    "Date": "2021-10-10",
+    "Time": "12:00:00"
   };
   Map Order2 = {
     "Order No": 2,
     "Chicken Burger": 2,
     "Beef Burger": 2,
     "Zinger Burger": 2,
-    "Double Beef Burger": 1,
+    "Double Beef Burger": 2,
+    "Date": "2021-12-10",
+    "Time": "09:11:00"
   };
   AllOrders.add(Order1);
   AllOrders.add(Order2);
@@ -156,9 +159,11 @@ OrderHistory(int index) {
   print("==> Order History <== ");
   print("1. All Orders");
   print("- - - - - - - - - ");
-  print("2. Search Order");
+  print("2. Search Order By Order No");
   print("- - - - - - - - - ");
-  print("3. Back to Main Menu");
+  print("3. Search Order By Date");
+  print("- - - - - - - - - ");
+  print("4. Back to Main Menu");
   print("- - - - - - - - - ");
   stdout.write("Please enter your choice: ");
   var choice = int.parse(stdin.readLineSync()!);
@@ -171,6 +176,8 @@ OrderHistory(int index) {
   } else if (choice == 2) {
     SearchOrder(index);
   } else if (choice == 3) {
+    SearchByDate(index);
+  } else if (choice == 4) {
     MainMenu(index);
   } else {
     print("Invalid choice");
@@ -197,12 +204,18 @@ SearchOrder(int index) {
 }
 
 OrderMenu(int index) {
+  print("==> Order <==");
   print("1. Add Order");
+  print("- - - - - - - -");
   print("2. Edit Order");
+  print("- - - - - - - -");
   print("3. Delete Order");
+  print("- - - - - - - -");
   print("4. Back to Main Menu");
+  print("- - - - - - - -");
   print("Please enter your choice: ");
   var choice = int.parse(stdin.readLineSync()!);
+  print("- - - - - - - -");
   if (choice == 1) {
     AddOrder(index);
   } else if (choice == 2) {
@@ -262,8 +275,28 @@ AddOrder(int index) {
     print("- - - - - - - - - - - - - - -");
   } while (
       choice2 == 'y' || choice2 == 'Y' || choice2 == 'yes' || choice2 == 'Yes');
+  order['Date'] = currentDate();
+  order['Time'] = currentTime();
   AllOrders.add(Map.from(order));
   BillGenerator(index, order);
+}
+
+currentDate() {
+  DateTime specificDate = DateTime.now();
+  int year = specificDate.year;
+  int month = specificDate.month;
+  int day = specificDate.day;
+  var currentDate = "$year-$month-$day";
+  return currentDate;
+}
+
+currentTime() {
+  DateTime specificDate = DateTime.now();
+  int hour = specificDate.hour;
+  int minute = specificDate.minute;
+  int second = specificDate.second;
+  var currentTime = "$hour:$minute:$second";
+  return currentTime;
 }
 
 BillGenerator(int index, Map Order) {
@@ -283,6 +316,8 @@ BillGenerator(int index, Map Order) {
   var choice = int.parse(stdin.readLineSync()!);
   print("- - - - - - - - - - - - - - -");
   print("=======> Bill <=======");
+  print("Order No: ${Order["Order No"]}");
+  print("Date: ${currentDate()} Time: ${currentTime()}");
   if (choice == 1) {
     Total = 0;
     if (Order["Chicken Burger"] != null) {
@@ -449,6 +484,8 @@ EditOrder(int index) {
           choice2 == 'Y' ||
           choice2 == 'yes' ||
           choice2 == 'Yes');
+      orderEdit['Date'] = currentDate();
+      orderEdit['Time'] = currentTime();
       AllOrders.add(Map.from(orderEdit));
       BillGenerator(index, orderEdit);
     }
@@ -474,4 +511,23 @@ DeleteOrder(int index) {
     print("- - - - - - - - - - - - - - -");
     OrderMenu(index);
   }
+}
+
+SearchByDate(int index) {
+  bool isFound = false;
+  print("==> Search By Date <==");
+  stdout.write("Enter Date: (yyyy/mm/dd)");
+  var Date = stdin.readLineSync()!;
+  for (int i = 0; i < AllOrders.length; i++) {
+    if (Date == AllOrders[i]["Date"]) {
+      print(AllOrders[i]);
+      isFound = true;
+    }
+  }
+  if (!isFound) {
+    print("Order Not Found");
+    print("Returning to Order History");
+    OrderHistory(index);
+  }
+  MainMenu(index);
 }
